@@ -1,5 +1,7 @@
 # YTM Mini Mode 🎵
 
+![YTM Mini Mode Screenshot](https://addons.mozilla.org/user-media/previews/full/349/349205.png?modified=1769414896)
+
 A lightweight, distraction-free mini-player extension for YouTube Music, available for Firefox and Chrome. 
 
 ![Version](https://img.shields.io/badge/version-1.2-blue.svg)
