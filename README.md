@@ -7,65 +7,82 @@ A lightweight, distraction-free mini-player extension for YouTube Music, availab
 ![Version](https://img.shields.io/badge/version-1.2-blue.svg)
 ![License](https://img.shields.io/badge/license-MIT-green.svg)
 
-## 📖 Overview
+## 📖 Project Purpose
 
 YouTube Music is great, but managing playback while coding or studying often means hunting through dozens of open tabs. **YTM Mini Mode** solves this by adding a native toggle button directly to the YouTube Music interface. 
 
-With one click, your music pops out into a clean, responsive, and persistent mini-window. Click it again, and it seamlessly pops back into your main browser window.
+With one click, your music pops out into a clean, responsive, and persistent mini-window. Click it again, and it seamlessly pops back into your main browser window without interrupting playback.
 
 ### ✨ Features
-* **Seamless Window Management:** Pop the player out into a mini-window, or pop it back into your main browser session without interrupting playback.
-* **Responsive Design:** Optimized CSS ensures album art and song titles scale perfectly without getting squished.
-* **Lightweight & Private:** Built with pure JavaScript and CSS (Manifest V3). No tracking, no data collection, and zero external dependencies.
-* **Cross-Platform:** Supports both Mozilla Firefox and Google Chrome using a unified codebase.
+* **Seamless Window Management:** Pop the player out into a mini-window, or pop it back into your main browser session.
+* **Responsive Design:** Optimized CSS ensures album art and song titles scale perfectly.
+* **Privacy First:** No tracking, no data collection. 
 
 ---
 
-## 🚀 Installation
+## 🛠️ Tech Stack
 
-### Official Stores
-* **Firefox:** [Download from Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/ytm-mini-mode/)
-* **Chrome:** [Download from Chrome Web Store](LINK_TO_YOUR_CHROME_EXTENSION) *(Pending Review)*
-
-### Manual Installation (Developer Mode)
-If you want to test the latest source code directly:
-1. Clone this repository: `git clone https://github.com/Labreo/ytm-mini-mode.git`
-2. Run the build script: `bash build.sh`
-3. **For Chrome:** Go to `chrome://extensions/`, enable "Developer mode", click "Load unpacked", and select the `dist/chrome/` folder.
-4. **For Firefox:** Go to `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on", and select the `manifest.json` inside the `dist/firefox/` folder.
+This project is built using:
+* **Vanilla JavaScript** & **CSS**
+* **webextension-polyfill** for cross-browser API compatibility.
+* **Manifest V3** (Chrome) and **Manifest V2** (Firefox).
+* **Bash** for standard build automation without heavy webpack/bundlers.
+* **ESLint** & **Prettier** for code formatting and standardisation.
 
 ---
 
-## 🛠️ Building from Source
+## 💻 Local Setup Instructions
 
-This project uses a Single-Source, Multiple-Build architecture to maintain compatibility across browsers without duplicating code.
+These instructions have been designed and tested for a clean local machine environment.
 
-**Directory Structure:**
-* `/src/` - Contains the core extension logic (`background.js`, `content.js`) and assets.
-* `manifest.chrome.json` & `manifest.firefox.json` - Browser-specific configurations.
-* `build.sh` - Automates the packaging process.
+### Prerequisites
+* [Node.js](https://nodejs.org/en) (v18+ recommended)
+* `npm` (comes with Node.js)
+* Git
 
-To generate the distribution `.zip` files for publishing:
-\`\`\`bash
-./build.sh
-\`\`\`
-This will compile the clean, store-ready files into the `/dist/` directory.
+### Step-by-Step Setup
+
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/Labreo/ytm-miniplayer.git
+   cd ytm-miniplayer
+   ```
+
+2. **Install development dependencies:**
+   This project uses npm purely for linting, formatting, and polyfills.
+   ```bash
+   npm install
+   ```
+
+3. **Build the extension:**
+   Generate the clean, store-ready browser distributions:
+   ```bash
+   npm run build
+   # Or run directly: bash build.sh
+   ```
+   *This will create a `dist/` directory containing `chrome/` and `firefox/` builds.*
+
+4. **Load the extension manually into your browser:**
+   * **For Chrome:** Navigate to `chrome://extensions/`, toggle on "Developer mode" in the top right, click "Load unpacked", and select the `dist/chrome/` folder.
+   * **For Firefox:** Navigate to `about:debugging#/runtime/this-firefox`, click "Load Temporary Add-on", and select the `manifest.json` inside the `dist/firefox/` folder.
 
 ---
 
-## 🤝 Contributing
+## 🤝 Contribution Guidelines
 
-Contributions, issues, and feature requests are welcome! Since this is an active project, please check the [Issues](https://github.com/Labreo/ytm-miniplayer/issues) page before submitting a major pull request. 
+Contributions, issues, and feature requests are highly encouraged! 
 
-1. Fork the project.
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4. Push to the branch (`git push origin feature/AmazingFeature`).
-5. Open a Pull Request.
+We follow standard GitHub flow and require that all pull requests pass our automated CI/CD checks (linting, formatting, building). Before starting major work, please review our comprehensive **[CONTRIBUTING.md](CONTRIBUTING.md)** for our full code style rules, PR expectations, and standard practices.
+
+* Quick commands you'll need:
+  * `npm run lint` / `npm run format`
 
 ---
 
-## ☕ Support
+## 💬 Contact & Support
+
+**Have questions or want to discuss a major feature?**
+Reach out to me directly on **Discord**: `.kakaroth`
 
 If this extension makes your daily workflow a little smoother, consider supporting the development! 
 
