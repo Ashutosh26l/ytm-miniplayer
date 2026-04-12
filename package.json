@@ -1,5 +1,20 @@
 {
+  "name": "ytm-mini-mode",
+  "version": "1.2.0",
+  "description": "Lightweight mini-player extension for YouTube Music (Firefox & Chrome)",
+  "author": "Kanak Waradkar",
+  "license": "MIT",
+  "scripts": {
+    "build": "bash build.sh",
+    "lint": "eslint src/",
+    "lint:fix": "eslint src/ --fix",
+    "format": "prettier --write \"src/**/*.js\" \"*.json\" \"*.sh\" \"*.md\"",
+    "format:check": "prettier --check \"src/**/*.js\" \"*.json\" \"*.sh\" \"*.md\""
+  },
   "devDependencies": {
+    "eslint": "^9.0.0",
+    "globals": "^15.0.0",
+    "prettier": "^3.0.0",
     "webextension-polyfill": "^0.12.0"
   }
 }

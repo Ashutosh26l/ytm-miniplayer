@@ -1,0 +1,175 @@
+name: CI
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  # ─────────────────────────────────────────────
+  # 1. BUILD – verifies the shell build succeeds
+  # ─────────────────────────────────────────────
+  build:
+    name: Build (Chrome & Firefox)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run build script
+        run: bash build.sh
+
+      - name: Verify Chrome dist exists
+        run: |
+          test -f dist/chrome/manifest.json   || (echo "❌ dist/chrome/manifest.json missing" && exit 1)
+          test -f dist/chrome/content.js      || (echo "❌ dist/chrome/content.js missing"    && exit 1)
+          test -f dist/chrome/background.js   || (echo "❌ dist/chrome/background.js missing" && exit 1)
+          echo "✅ Chrome dist looks good"
+
+      - name: Verify Firefox dist exists
+        run: |
+          test -f dist/firefox/manifest.json  || (echo "❌ dist/firefox/manifest.json missing"  && exit 1)
+          test -f dist/firefox/content.js     || (echo "❌ dist/firefox/content.js missing"     && exit 1)
+          test -f dist/firefox/background.js  || (echo "❌ dist/firefox/background.js missing"  && exit 1)
+          echo "✅ Firefox dist looks good"
+
+      - name: Verify ZIP files were created
+        run: |
+          test -f dist/ytm-mini-chrome.zip  || (echo "❌ Chrome ZIP missing"  && exit 1)
+          test -f dist/ytm-mini-firefox.zip || (echo "❌ Firefox ZIP missing" && exit 1)
+          echo "✅ ZIP artefacts created"
+
+      - name: Upload build artefacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: extension-zips
+          path: |
+            dist/ytm-mini-chrome.zip
+            dist/ytm-mini-firefox.zip
+          retention-days: 7
+
+  # ─────────────────────────────────────────────
+  # 2. LINT – static analysis with ESLint
+  # ─────────────────────────────────────────────
+  lint:
+    name: Lint (ESLint)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install ESLint
+        run: npm install --save-dev eslint@9 globals
+
+      - name: Run ESLint
+        run: npx eslint src/
+
+  # ─────────────────────────────────────────────
+  # 3. FORMAT – check code style with Prettier
+  # ─────────────────────────────────────────────
+  format:
+    name: Format Check (Prettier)
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Prettier
+        run: npm install --save-dev prettier
+
+      - name: Run Prettier check
+        run: npx prettier --check "src/**/*.js" "*.json" "*.sh" "*.md"
+
+  # ─────────────────────────────────────────────
+  # 4. VALIDATE MANIFESTS – JSON schema checks
+  # ─────────────────────────────────────────────
+  validate-manifests:
+    name: Validate Manifests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Validate JSON is well-formed (Chrome)
+        run: python3 -c "import json, sys; json.load(open('manifest.chrome.json')); print('✅ manifest.chrome.json is valid JSON')"
+
+      - name: Validate JSON is well-formed (Firefox)
+        run: python3 -c "import json, sys; json.load(open('manifest.firefox.json')); print('✅ manifest.firefox.json is valid JSON')"
+
+      - name: Check Chrome manifest version is 3
+        run: |
+          MV=$(python3 -c "import json; print(json.load(open('manifest.chrome.json'))['manifest_version'])")
+          [ "$MV" = "3" ] || (echo "❌ Chrome manifest must be MV3, got $MV" && exit 1)
+          echo "✅ Chrome manifest_version = $MV"
+
+      - name: Check Firefox manifest version is 2
+        run: |
+          MV=$(python3 -c "import json; print(json.load(open('manifest.firefox.json'))['manifest_version'])")
+          [ "$MV" = "2" ] || (echo "❌ Firefox manifest must be MV2, got $MV" && exit 1)
+          echo "✅ Firefox manifest_version = $MV"
+
+      - name: Check permissions parity
+        run: |
+          python3 - <<'EOF'
+          import json
+
+          chrome = json.load(open("manifest.chrome.json"))
+          firefox = json.load(open("manifest.firefox.json"))
+
+          chrome_perms  = set(chrome.get("permissions", []))
+          firefox_perms = set(firefox.get("permissions", []))
+
+          only_chrome  = chrome_perms - firefox_perms
+          only_firefox = firefox_perms - chrome_perms
+
+          if only_chrome:
+              print(f"⚠️  Permissions only in Chrome manifest: {only_chrome}")
+          if only_firefox:
+              print(f"⚠️  Permissions only in Firefox manifest: {only_firefox}")
+          if not only_chrome and not only_firefox:
+              print("✅ Permissions are in sync between both manifests")
+          EOF
+
+  # ─────────────────────────────────────────────
+  # 5. SECURITY – check for hardcoded secrets
+  # ─────────────────────────────────────────────
+  security:
+    name: Secret Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # full history needed by gitleaks
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
