@@ -60,6 +60,7 @@ This project uses **vanilla JavaScript** with no transpilers or bundlers. Keep t
 - Keep lines under **120 characters**.
 - Prefer readability over cleverness — this codebase is intentionally simple for contributors of all levels.
 - Remove any `console.log` debug statements before opening a PR.
+- **No PII:** Ensure your commits and code do not contain any Personally Identifiable Information (emails, phone numbers, credentials, etc.).
 
 ---
 
