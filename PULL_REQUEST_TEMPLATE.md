@@ -11,6 +11,7 @@
 - [ ] New feature
 - [ ] UI/UX change
 - [ ] Performance improvement
+- [ ] Documentation update
 
 ## Changes
 <!-- Bullet list of the specific files or behaviours changed. -->
