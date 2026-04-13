@@ -41,3 +41,4 @@
 - [ ] No console.log statements left in production code
 - [ ] Both manifests updated (if a new permission was added)
 ````
+[<-- Go back to CONTRIBUTING.md](CONTRIBUTING.md#pull-request-format)
