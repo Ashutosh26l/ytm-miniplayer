@@ -1,7 +1,5 @@
 ## Pull Request Template
-#### Use this Template while opening a PR:
 
-```md
 ## Summary
 <!-- One to three sentences explaining what this PR does and why. -->
 
@@ -40,5 +38,4 @@
 - [ ] Tested in Firefox
 - [ ] No console.log statements left in production code
 - [ ] Both manifests updated (if a new permission was added)
-````
-[<-- Go back to CONTRIBUTING.md](CONTRIBUTING.md#pull-request-format)
+
